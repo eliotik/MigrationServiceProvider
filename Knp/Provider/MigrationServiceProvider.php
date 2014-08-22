@@ -32,6 +32,13 @@ class MigrationServiceProvider implements ServiceProviderInterface
         }
     }
 
+    public function boot(Application $app)
+    {
+        if (isset($app['migration.register_before_handler']) && $app['migration.register_before_handler']) {
+            $this->registerBeforeHandler($app);
+        }
+    }
+
     private function registerBeforeHandler($app)
     {
         $app->before(function() use ($app) {
@@ -41,13 +48,15 @@ class MigrationServiceProvider implements ServiceProviderInterface
                 $manager->createVersionInfo();
             }
 
-            if (true === $manager->migrate() && isset($app['twig'])) {
-                $app['twig']->addGlobal('migration_infos', $manager->getMigrationInfos());
+            $migrate = $manager->migrate;
+
+            if (isset($app['twig'])) {
+                if (true === $migrate) {
+                    $app['twig']->addGlobal('migration_infos', 'Migrated. New version: ' . $manager->getMigrationInfos());
+                } else {
+                    $app['twig']->addGlobal('migration_infos', 'Nothing to migrate. Actual version: ' . $manager->getMigrationInfos());
+                }
             }
         });
-    }
-
-    public function boot(Application $app)
-    {        
     }
 }
