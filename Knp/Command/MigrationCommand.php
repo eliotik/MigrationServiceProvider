@@ -2,23 +2,36 @@
 
 namespace Knp\Command;
 
-use Knp\Command\Command;
+use Knp\Command\Command as KnpCommand;
 
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class MigrationCommand extends Command
+class MigrationCommand extends KnpCommand
 {
     public function configure()
     {
-        $this->setName('knp:migration:migrate');
+        $this
+            ->setName('migration:migrate')
+            ->setDescription('Migrates the database to the newest version.')
+            ->setHelp(
+
+<<<EOF
+    The <info>migration:migrate</info> command brings the Migrations to the newest version.
+    If the database is empty, it creates all the tables from the Migrations-Folder.
+    If there is content in the database, it checks up the Migration-Number with the schema_version in the table "schema_version".
+    <info>app/console migration:migrate</info>
+EOF
+            );
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $app        = $this->getSilexApplication();
+
+        /** @var \Knp\Migration\Manager $manager */
         $manager    = $app['migration'];
 
         if (!$manager->hasVersionInfo()) {
