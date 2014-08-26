@@ -44,13 +44,17 @@ class MigrationServiceProvider implements ServiceProviderInterface
                 $manager->createVersionInfo();
             }
 
-            $migrate = $manager->migrate;
+            $migrate = $manager->migrate();
 
             if (isset($app['twig'])) {
+
+                $migrationInfos = $manager->getMigrationInfos();
+                $migrationVersion = $manager->getCurrentVersion();
+
                 if (true === $migrate) {
-                    $app['twig']->addGlobal('migration_infos', 'Migrated. New version: ' . $manager->getMigrationInfos());
+                    $app['twig']->addGlobal('migration_infos', 'Migrated. New version: ' . $migrationVersion . '. Status: ' . $migrationInfos[$migrationVersion]);
                 } else {
-                    $app['twig']->addGlobal('migration_infos', 'Nothing to migrate. Actual version: ' . $manager->getMigrationInfos());
+                    $app['twig']->addGlobal('migration_infos', 'Nothing to migrate. Actual version: ' . $migrationVersion);
                 }
             }
         });

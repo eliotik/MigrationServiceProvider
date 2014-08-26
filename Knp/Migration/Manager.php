@@ -91,7 +91,7 @@ class Manager
     public function getCurrentVersion()
     {
         if (is_null($this->currentVersion)) {
-            $this->currentVersion = $this->conn->fetchColumn('SELECT ' . $this->migrationsTableName . ' FROM schema_version');
+            $this->currentVersion = $this->connection->fetchColumn('SELECT ' . $this->migrationsTableName . ' FROM schema_version');
         }
 
         return $this->currentVersion;
