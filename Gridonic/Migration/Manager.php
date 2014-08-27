@@ -159,7 +159,7 @@ class Manager
 
         $migrationInfos = array();
 
-        /** @var $migration \Knp\Migration\AbstractMigration */
+        /** @var $migration \Gridonic\Migration\AbstractMigration */
         foreach ($migrations as $migration) {
 
             $this->actualizeSchema();

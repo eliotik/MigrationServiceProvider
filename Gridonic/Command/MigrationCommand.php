@@ -31,7 +31,7 @@ EOF
     {
         $app        = $this->getSilexApplication();
 
-        /** @var \Knp\Migration\Manager $manager */
+        /** @var \Gridonic\Migration\Manager $manager */
         $manager    = $app['migration'];
 
         if (!$manager->hasVersionInfo()) {
