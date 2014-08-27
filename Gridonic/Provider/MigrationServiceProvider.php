@@ -1,18 +1,18 @@
 <?php
 
-namespace Knp\Provider;
+namespace Gridonic\Provider;
 
 use Silex\ServiceProviderInterface;
 use Silex\Application;
 
-use Knp\Migration\Manager as MigrationManager;
+use Gridonic\Migration\Manager as MigrationManager;
 
 use Symfony\Component\Finder\Finder;
 
 use Knp\Console\ConsoleEvents;
 use Knp\Console\ConsoleEvent;
 
-use Knp\Command\MigrationCommand;
+use Gridonic\Command\MigrationCommand;
 
 class MigrationServiceProvider implements ServiceProviderInterface
 {

@@ -4,20 +4,28 @@ This is a simple homebrew schema migration system for silex and doctrine.
 
 ## Install
 
-As usual, just include `knplabs/migration-service-provider` in your `composer.json` (don't tell me you don't have one, it's 2012 already), and register the service. You will have to pass the `migration.path` option, which should contain the path to your migrations files:
+As usual, just include `gridonic/migration-service-provider` in your `composer.json` and register the service.
 
 ```php
-$app->register(new \Knp\Provider\MigrationServiceProvider(), array(
-    'migration.path' => __DIR__.'/../src/Resources/migration'
+$app->register(new \Gridonic\Provider\MigrationServiceProvider(), array(
+    'migration.path' => __DIR__.'/../src/Resources/migrations',
+    'migration.register_before_handler' => true,
+    'migration.migrations_table_name'   => 'migration_version',
 ));
 ```
 
+| Key | Type | Optional | Description |
+| --- | --- | --- | --- |
+| `migrations.path` | String, folder path | - | Where are your migrations? |
+| `migrations.register_before_handler` | Boolean | x | Should the service run the migrations on each boot? |
+| `migrations.migrations_table_name` | String | x | The name of the table in the database, where the migration_version is safed. Default `schema_version` |
+
 ## Enough small talk, I want to write migrations!
 
-And I am too lazy to write a comprehensive documentation right now, so you will have to rely on two external resources:
+Perhaps, this documentation is not complete. So here are some links with more informations:
 
-1. [The marketplace's migrations](https://github.com/KnpLabs/marketplace/tree/master/src/Resources/migrations)
-2. [The official documentation for Doctrine's DBAL Schema Manager](http://readthedocs.org/docs/doctrine-dbal/en/latest/reference/schema-manager.html)
+* [The official documentation for Doctrine's DBAL Schema Manager](http://readthedocs.org/docs/doctrine-dbal/en/latest/reference/schema-manager.html)
+* [Original `KnpLabs\migration-service-provider`](https://github.com/KnpLabs/MigrationServiceProvider)
 
 ## Running migrations
 
@@ -29,39 +37,46 @@ If you pass a `migration.register_before_handler` (set to `true`) when registeri
 
 You might want to enable this behavior for development mode, but please don't do that in production!
 
-### Using the `knp:migration:migrate` command
+### Using the `migration:migrate` command
 
-If you installed the console service provider right, you can use the `knp:migration:migrate` command.
+If you installed the console service provider right, you can use the `migration:migrate` command, so your app does not have to run the migrations each time when your web-Application is called.
 
 ## Writing migrations
 
 A migration consist of a single file, holding a migration class. By design, the migration file must be named something like `<version>_<migration_name>Migration.php` and located in `src/Resources/migrations`, and the class `<migration_name>Migration`. For example, if your migration adds a `bar` field to the `foo` table, and is the 5th migration of your schema, you should name your file `05_FooBarMigration.php`, and the class would be named `FooBarMigration`.
 
-In addition to these naming conventions, your migration class must extends `Knp\Migration\AbstractMigration`, which provides a few helping method such as `getVersion` and default implementations for migration methods.
+In addition to these naming conventions, your migration class must extends `Gridonic\Migration\AbstractMigration`, which provides a few helping method such as `getVersion` and default implementations for migration methods.
 
-The migration methods consist of 4 methods:
+The migration methods consist of 4 methods, which are called in this order:
 
 * `schemaUp`
-* `schemaDown`
 * `appUp`
+* `schemaDown`
 * `appDown`
 
-The names are pretty self-explanatory. Each `schema*` method is fed a `Doctrine\DBAL\Schema\Schema` instance of which you're expected to work to add, remove or modify fields and/or tables. The `app*` method are given a `Silex\Application` instance, actually your very application. You can see an example of useful `appUp` migration in the marketplace's [CommentMarkdownCacheMigration](https://github.com/knplabs/marketplace/blob/master/src/Resources/migrations/04_CommentMarkdownCacheMigration.php).
+### schemaUp
+You get a `Doctrine\DBAL\Schema\Schema` instance where you can add, remove or modify the schema of your database.
+
+### appUp
+After the `schemaUp`, you can edit the application - you get a `Silex\Application` instance for that. Here you can modify existing data after you have added a column.
+
+### schemaDown
+After the `appUp`, you can modify the schema of your database again. You get a `Doctrine\DBAL\Schema\Schema` instance which you can use.
+
+### appDown
+Last but not least, you can work again with a `Silex\Application` instance. Modify the existing data or something like this.
 
 ## Migration infos
 
-There's one last method you should know about: `getMigrationInfo`. This method should return a self-explanatory description of the migration (it is optional though, and you can skip its implementation). When a migration implementing the `getMigrationInfo` method is run, and if you use twig, a global variable is set in your twig environment containing an array of all run migration informations.
+There's one last method you should know about: `getMigrationInfos`. This method should return a self-explanatory description of the migration (it is optional though, and you can skip its implementation).
+If you use [Twig](http://twig.sensiolabs.org/), we have built in a `migration_infos` for twig - perhaps a function just for the developer-mode.
 
 You can then use it with something like that:
 
 ```html
-      {% if migration_infos is defined %}
-        <div class="alert alert-success">
-          <p>Some migrations have been run:</p>
-          <ul>
-          {% for info in migration_infos %}
-            <li>{{ info }}</li>
-          {% endfor %}
-        </div>
-      {% endif %}
+      Migration informations: {{ migration_infos }}
 ```
+
+## Licence
+The MigrationServiceProvider is licensed under the MIT license.
+The original library from is taken from the [KnpLabs](https://github.com/KnpLabs/MigrationServiceProvider).

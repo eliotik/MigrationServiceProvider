@@ -1,6 +1,6 @@
 <?php
 
-namespace Knp\Migration;
+namespace Gridonic\Migration;
 
 use Silex\Application;
 use Doctrine\DBAL\Schema\Schema;
@@ -9,9 +9,28 @@ use Symfony\Component\Finder\Finder;
 
 class Manager
 {
+    const COLUMN_NAME_VERSION = 'schema_version';
+
     private $application;
 
+    /**
+     * @var \Doctrine\DBAL\Schema\Schema
+     */
     private $schema;
+
+    /**
+     * Clone from $schema
+     * We need this schema to migrate the difference from schema to schemaUp
+     * @var \Doctrine\DBAL\Schema\Schema
+     */
+    private $toSchemaUp;
+
+    /**
+     * Clone from $schemaUp
+     * We need this schema to migrate the difference from schemaUp to schemaDown
+     * @var \Doctrine\DBAL\Schema\Schema
+     */
+    private $toSchemaDown;
 
     private $connection;
 
@@ -25,20 +44,21 @@ class Manager
 
     public function __construct(Connection $connection, Application $application, Finder $finder)
     {
-        $this->schema      = $connection->getSchemaManager()->createSchema();
-        $this->toSchema    = clone($this->schema);
-        $this->connection  = $connection;
-        $this->finder      = $finder;
-        $this->application = $application;
+        $this->schema       = $connection->getSchemaManager()->createSchema();
+        $this->toSchemaUp   = clone($this->schema);
+        $this->toSchemaDown = clone($this->toSchemaUp);
+        $this->connection   = $connection;
+        $this->finder       = $finder;
+        $this->application  = $application;
 
         if(isset($application['migration.migrations_table_name'])) {
             $this->migrationsTableName = $application['migration.migrations_table_name'];
         }
     }
 
-    private function buildSchema(Schema $schema)
+    private function buildSchema(Schema $fromSchema, Schema $toSchema)
     {
-        $queries = $this->schema->getMigrateToSql($schema, $this->connection->getDatabasePlatform());
+        $queries = $fromSchema->getMigrateToSql($toSchema, $this->connection->getDatabasePlatform());
 
         foreach ($queries as $query) {
             $this->connection->exec($query);
@@ -78,6 +98,13 @@ class Manager
         return $migrations;
     }
 
+    private function actualizeSchema()
+    {
+        $this->schema       = $this->connection->getSchemaManager()->createSchema();
+        $this->toSchemaUp   = clone($this->schema);
+        $this->toSchemaDown = clone($this->toSchemaUp);
+    }
+
     public function getMigrationInfos()
     {
         return $this->migrationInfos;
@@ -91,7 +118,7 @@ class Manager
     public function getCurrentVersion()
     {
         if (is_null($this->currentVersion)) {
-            $this->currentVersion = $this->connection->fetchColumn('SELECT ' . $this->migrationsTableName . ' FROM schema_version');
+            $this->currentVersion = $this->connection->fetchColumn('SELECT ' . $this::COLUMN_NAME_VERSION . ' FROM ' . $this->migrationsTableName);
         }
 
         return $this->currentVersion;
@@ -100,7 +127,7 @@ class Manager
     public function setCurrentVersion($version)
     {
         $this->currentVersion = $version;
-        $this->connection->executeUpdate('UPDATE ' . $this->migrationsTableName . ' SET schema_version = ?', array($version));
+        $this->connection->executeUpdate('UPDATE ' . $this->migrationsTableName . ' SET ' . $this::COLUMN_NAME_VERSION . ' = ?', array($version));
     }
 
     public function hasVersionInfo()
@@ -113,17 +140,16 @@ class Manager
         $schema = clone($this->schema);
 
         $schemaVersion = $schema->createTable($this->migrationsTableName);
-        $schemaVersion->addColumn($this->migrationsTableName, 'integer', array('unsigned' => true, 'default' => 0));
+        $schemaVersion->addColumn($this::COLUMN_NAME_VERSION, 'integer', array('unsigned' => true, 'default' => 0));
 
-        $this->buildSchema($schema);
+        $this->buildSchema($this->schema, $schema);
 
-        $this->connection->insert($this->migrationsTableName, array('schema_version' => 0));
+        $this->connection->insert($this->migrationsTableName, array($this::COLUMN_NAME_VERSION => 0));
     }
 
     public function migrate()
     {
-        $from    = $this->connection->fetchColumn('SELECT ' . $this->migrationsTableName . ' FROM schema_version');
-        $queries = array();
+        $from    = $this->connection->fetchColumn('SELECT ' . $this::COLUMN_NAME_VERSION . ' FROM ' . $this->migrationsTableName);
 
         $migrations = $this->findMigrations($from);
 
@@ -131,24 +157,40 @@ class Manager
             return null;
         }
 
-        foreach ($migrations as $migration) {
-            $migration->schemaUp($this->toSchema);
-        }
-
-        $this->buildSchema($this->toSchema);
-
-        foreach ($migrations as $migration) {
-            $migration->appUp($this->application);
-        }
-
         $migrationInfos = array();
 
+        /** @var $migration \Knp\Migration\AbstractMigration */
         foreach ($migrations as $migration) {
+
+            $this->actualizeSchema();
+
+            // schema up, edit database
+            $migration->schemaUp($this->toSchemaUp);
+
+            // build app to include the changes
+            $this->buildSchema($this->schema, $this->toSchemaUp);
+
+            // app up, edit content
+            $migration->appUp($this->application);
+
+            // actualize the schema to the newest database-schema.
+            $this->actualizeSchema();
+
+            // schema down, edit database
+            $migration->schemaDown($this->toSchemaDown);
+
+            // build app to include the changes
+            $this->buildSchema($this->toSchemaUp, $this->toSchemaDown);
+
+            // app down, edit content
+            $migration->appDown($this->application);
+
             if (null !== $migration->getMigrationInfo()) {
                 $migrationInfos[$migration->getVersion()] = $migration->getMigrationInfo();
             }
 
             $this->migrationExecuted++;
+
         }
 
         $this->migrationInfos = $migrationInfos;
@@ -157,4 +199,6 @@ class Manager
 
         return true;
     }
+
+
 }

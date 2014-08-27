@@ -1,6 +1,6 @@
 <?php
 
-namespace Knp\Migration;
+namespace Gridonic\Migration;
 
 use Doctrine\DBAL\Schema\Schema;
 use Silex\Application;
