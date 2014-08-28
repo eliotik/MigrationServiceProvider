@@ -48,9 +48,9 @@ abstract class GridonicTestCase extends \PHPUnit_Framework_TestCase
     }
 
     private function clearDatabase() {
-        $databaseDir = __DIR__ . '/../../database/';
-        if (is_file($databaseDir . 'test.db')) {
-            unlink($databaseDir . 'test.db');
+        $databaseDir = __DIR__ . '/../../database';
+        if (is_file($databaseDir . '/test.db')) {
+            unlink($databaseDir . '/test.db');
         }
         @chmod($databaseDir, 0777);
     }
