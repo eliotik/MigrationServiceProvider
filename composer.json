@@ -17,6 +17,7 @@
     ],
     "require": {
         "php":                              ">=5.3.2",
+        "silex/silex":                      "~1.2",
         "doctrine/dbal":                    "~2.3",
         "symfony/finder":                   "~2.1",
         "knplabs/console-service-provider": "dev-master"
