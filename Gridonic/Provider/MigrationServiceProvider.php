@@ -33,7 +33,9 @@ class MigrationServiceProvider implements ServiceProviderInterface
         if (isset($app['migration.register_before_handler']) && $app['migration.register_before_handler']) {
             $this->registerBeforeHandler($app);
         }else {
-            $app['twig']->addGlobal('migration_infos', 'You have to start the migration manually in the console.');
+            if (isset($app['twig'])) {
+                $app['twig']->addGlobal('migration_infos', 'You have to start the migration manually in the console.');
+            }
         }
     }
 
