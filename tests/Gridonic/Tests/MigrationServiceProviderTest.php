@@ -13,6 +13,7 @@ namespace Gridonic\Tests;
 
 use Silex\Provider\DoctrineServiceProvider;
 use Gridonic\Provider\MigrationServiceProvider;
+use Symfony\Component\Console\Tester\CommandTester;
 
 /**
  * Tests for the MigrationServiceProvider
@@ -21,6 +22,14 @@ use Gridonic\Provider\MigrationServiceProvider;
  */
 class MigrationServiceProviderTest extends GridonicTestCase
 {
+
+    protected $migrationCommand = 'migration:migrate';
+    protected $databaseInsert = array(
+        'test_id' => '1',
+        'test_created' => '100000000',
+        'test_name' => 'testname',
+        'test_password' => '1234'
+    );
 
     /**
      * Check some basic stuff.
@@ -93,6 +102,52 @@ class MigrationServiceProviderTest extends GridonicTestCase
 
         // now nothing should have changed.
         $this->assertEquals($migrationInformation, $migration->getMigrationInfos());
+    }
 
+    /**
+     * Test the migration command migration:migrate
+     * - Execute, check output
+     * - Execute again, check output
+     * - Insert a row in the migrated table
+     */
+    public function testMigrationCommand()
+    {
+        /** @var \Knp\Console\Application $app */
+        $app = $this->createConsoleApplication();
+
+        $expectedMigrationMessageSuccess = "Successfully executed 1 migration(s)!\n - Added a test table\n";
+        $expectedMigrationMessageFailed = "No migrations to execute, you are up to date!\n";
+
+        // get migrationCommand
+        $command = $app->get($this->migrationCommand);
+        $tester = new CommandTester($command);
+
+        // execute first time
+        $tester->execute(array(
+            'command' => $command->getName(),
+        ));
+
+        // should be successfully
+        $this->assertEquals($expectedMigrationMessageSuccess, $tester->getDisplay());
+
+        // execute second time
+        $tester->execute(array(
+            'command' => $command->getName(),
+        ));
+
+        // should be fail
+        $this->assertEquals($expectedMigrationMessageFailed, $tester->getDisplay());
+
+        // test content of database
+        $silexApp = $app->getSilexApplication();
+
+        /** @var \Doctrine\DBAL\Connection $db */
+        $db =$silexApp['db'];
+
+        $db->insert('test', $this->databaseInsert);
+
+        $result = $db->fetchAssoc("SELECT `test_name` FROM `test` WHERE `test_id` = 1");
+
+        $this->assertEquals($this->databaseInsert['test_name'], $result['test_name']);
     }
 }

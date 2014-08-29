@@ -12,6 +12,9 @@
 namespace Gridonic\Tests;
 
 use Silex\Application;
+use Silex\Provider\DoctrineServiceProvider;
+use Knp\Provider\ConsoleServiceProvider;
+use Gridonic\Provider\MigrationServiceProvider;
 
 /**
  * Custom TestCase class with useful basic functions
@@ -21,6 +24,8 @@ use Silex\Application;
 abstract class GridonicTestCase extends \PHPUnit_Framework_TestCase
 {
     protected $migrationPath = '/../Ressources/migrations';
+    protected $consoleVersion = '1.0.0';
+    protected $consoleName = 'SilexTest';
 
     /**
      * Creates the silex app.
@@ -40,11 +45,48 @@ abstract class GridonicTestCase extends \PHPUnit_Framework_TestCase
 
 
         // add this for the tests. Fails otherwise.
-        $app['migration.path'] = __DIR__ . '/../Ressources/migrations';
+        $app['migration.path'] = __DIR__ . $this->migrationPath;
 
 
         // return the created app.
         return $app;
+    }
+
+    public function registerServices(Application $app) {
+
+        $app->register(new DoctrineServiceProvider());
+        $app->register(new MigrationServiceProvider(array(
+            'migration.path' => $this->migrationPath,
+        )));
+
+        $app->register(new ConsoleServiceProvider(), array(
+            'console.name'              => $this->consoleName,
+            'console.version'           => $this->consoleVersion,
+            'console.project_directory' => __DIR__ . '/'
+        ));
+
+        return $app;
+    }
+
+    public function createConsoleApplication()
+    {
+
+        $this->clearDatabase();
+
+        /** @var Application $app */
+        $app = new Application();
+
+        // add config file
+        require __DIR__ . '/../../config.test.php';
+
+
+        // add this for the tests. Fails otherwise.
+        $app['migration.path'] = __DIR__ . $this->migrationPath;
+
+        $app = $this->registerServices($app);
+
+        // return the created app.
+        return $app['console'];
     }
 
     private function clearDatabase() {
