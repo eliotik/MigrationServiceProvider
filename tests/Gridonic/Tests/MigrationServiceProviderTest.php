@@ -115,7 +115,7 @@ class MigrationServiceProviderTest extends GridonicTestCase
         /** @var \Knp\Console\Application $app */
         $app = $this->createConsoleApplication();
 
-        $expectedMigrationMessageSuccess = "executed 1 migration(s)!\n - Added a test table\n";
+        $expectedMigrationMessageSuccess = "Successfully executed 1 migration(s)!\n - Added a test table\n";
         $expectedMigrationMessageFailed = "No migrations to execute, you are up to date!\n";
 
         // get migrationCommand
@@ -128,7 +128,7 @@ class MigrationServiceProviderTest extends GridonicTestCase
         ));
 
         // should be successfully
-        $this->assertStringEndsWith($expectedMigrationMessageSuccess, $tester->getDisplay());
+        $this->assertEquals($expectedMigrationMessageSuccess, $tester->getDisplay());
 
         // execute second time
         $tester->execute(array(
