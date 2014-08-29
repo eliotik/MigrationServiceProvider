@@ -42,7 +42,7 @@ EOF
 
         switch($res) {
             case true:
-                $output->writeln(sprintf('Succesfully executed <info>%d</info> migration(s)!', $manager->getMigrationExecuted()));
+                $output->writeln(sprintf('Successfully executed <info>%d</info> migration(s)!', $manager->getMigrationExecuted()));
                 foreach ($manager->getMigrationInfos() as $info) {
                     $output->writeln(sprintf(' - <info>%s</info>', $info));
                 }
