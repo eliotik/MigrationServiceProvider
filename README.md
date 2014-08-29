@@ -1,4 +1,6 @@
-# Migrations
+# MigrationServiceProvider
+
+[![Build Status](https://travis-ci.org/gridonic/MigrationServiceProvider.svg?branch=master)](https://travis-ci.org/gridonic/MigrationServiceProvider)
 
 This is a simple homebrew schema migration system for silex and doctrine.
 
