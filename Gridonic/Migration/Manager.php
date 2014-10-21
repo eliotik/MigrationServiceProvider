@@ -2,10 +2,10 @@
 
 namespace Gridonic\Migration;
 
-use Silex\Application;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\Finder\Finder;
+use Silex\Application;
 
 class Manager
 {

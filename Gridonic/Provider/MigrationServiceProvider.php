@@ -2,16 +2,12 @@
 
 namespace Gridonic\Provider;
 
+use Symfony\Component\Finder\Finder;
 use Silex\ServiceProviderInterface;
 use Silex\Application;
-
 use Gridonic\Migration\Manager as MigrationManager;
-
-use Symfony\Component\Finder\Finder;
-
-use Knp\Console\ConsoleEvents;
-use Knp\Console\ConsoleEvent;
-
+use Gridonic\Console\ConsoleEvents;
+use Gridonic\Console\ConsoleEvent;
 use Gridonic\Command\MigrationCommand;
 
 class MigrationServiceProvider implements ServiceProviderInterface

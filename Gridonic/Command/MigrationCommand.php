@@ -2,14 +2,11 @@
 
 namespace Gridonic\Command;
 
-use Knp\Command\Command as KnpCommand;
-
-use Symfony\Component\Console\Input\InputDefinition;
-use Symfony\Component\Console\Input\InputArgument;
+use Gridonic\Command\Command as GridonicCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class MigrationCommand extends KnpCommand
+class MigrationCommand extends GridonicCommand
 {
     public function configure()
     {
