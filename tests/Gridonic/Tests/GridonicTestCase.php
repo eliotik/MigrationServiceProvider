@@ -13,7 +13,7 @@ namespace Gridonic\Tests;
 
 use Silex\Application;
 use Silex\Provider\DoctrineServiceProvider;
-use Knp\Provider\ConsoleServiceProvider;
+use Gridonic\Provider\ConsoleServiceProvider;
 use Gridonic\Provider\MigrationServiceProvider;
 
 /**
