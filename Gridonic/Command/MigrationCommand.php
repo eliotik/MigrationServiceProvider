@@ -37,7 +37,7 @@ EOF
 
         $res = $manager->migrate();
 
-        switch($res) {
+        switch ($res) {
             case true:
                 $output->writeln(sprintf('Successfully executed <info>%d</info> migration(s)!', $manager->getMigrationExecuted()));
                 foreach ($manager->getMigrationInfos() as $info) {

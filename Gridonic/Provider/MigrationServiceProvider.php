@@ -14,11 +14,11 @@ class MigrationServiceProvider implements ServiceProviderInterface
 {
     public function register(Application $app)
     {
-        $app['migration'] = $app->share(function() use ($app) {
+        $app['migration'] = $app->share(function () use ($app) {
             return new MigrationManager($app['db'], $app, Finder::create()->in($app['migration.path']));
         });
 
-        $app['dispatcher']->addListener(ConsoleEvents::INIT, function(ConsoleEvent $event) {
+        $app['dispatcher']->addListener(ConsoleEvents::INIT, function (ConsoleEvent $event) {
             $application = $event->getApplication();
             $application->add(new MigrationCommand());
         });
@@ -28,7 +28,7 @@ class MigrationServiceProvider implements ServiceProviderInterface
     {
         if (isset($app['migration.register_before_handler']) && $app['migration.register_before_handler']) {
             $this->registerBeforeHandler($app);
-        }else {
+        } else {
             if (isset($app['twig'])) {
                 $app['twig']->addGlobal('migration_infos', 'You have to start the migration manually in the console.');
             }
@@ -37,7 +37,7 @@ class MigrationServiceProvider implements ServiceProviderInterface
 
     private function registerBeforeHandler($app)
     {
-        $app->before(function() use ($app) {
+        $app->before(function () use ($app) {
             $manager = $app['migration'];
 
             if (!$manager->hasVersionInfo()) {
@@ -47,7 +47,6 @@ class MigrationServiceProvider implements ServiceProviderInterface
             $migrate = $manager->migrate();
 
             if (isset($app['twig'])) {
-
                 $migrationInfos = $manager->getMigrationInfos();
                 $migrationVersion = $manager->getCurrentVersion();
 

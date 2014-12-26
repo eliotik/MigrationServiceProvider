@@ -52,8 +52,8 @@ abstract class GridonicTestCase extends \PHPUnit_Framework_TestCase
         return $app;
     }
 
-    public function registerServices(Application $app) {
-
+    public function registerServices(Application $app)
+    {
         $app->register(new DoctrineServiceProvider());
         $app->register(new MigrationServiceProvider(array(
             'migration.path' => $this->migrationPath,
@@ -70,7 +70,6 @@ abstract class GridonicTestCase extends \PHPUnit_Framework_TestCase
 
     public function createConsoleApplication()
     {
-
         $this->clearDatabase();
 
         /** @var Application $app */
@@ -89,7 +88,8 @@ abstract class GridonicTestCase extends \PHPUnit_Framework_TestCase
         return $app['console'];
     }
 
-    private function clearDatabase() {
+    private function clearDatabase()
+    {
         $databaseDir = __DIR__ . '/../../database';
         if (is_file($databaseDir . '/test.db')) {
             unlink($databaseDir . '/test.db');

@@ -22,7 +22,6 @@ use Symfony\Component\Console\Tester\CommandTester;
  */
 class MigrationServiceProviderTest extends GridonicTestCase
 {
-
     protected $migrationCommand = 'migration:migrate';
     protected $databaseInsert = array(
         'test_id' => '1',
@@ -34,8 +33,8 @@ class MigrationServiceProviderTest extends GridonicTestCase
     /**
      * Check some basic stuff.
      */
-    public function testBasics() {
-
+    public function testBasics()
+    {
         // Are the tests running correct?
         $this->assertTrue(true);
 

@@ -23,11 +23,19 @@ abstract class AbstractMigration
         return null;
     }
 
-    public function schemaUp(Schema $schema) {}
+    public function schemaUp(Schema $schema)
+    {
+    }
 
-    public function schemaDown(Schema $schema) {}
+    public function schemaDown(Schema $schema)
+    {
+    }
 
-    public function appUp(Application $app) {}
+    public function appUp(Application $app)
+    {
+    }
 
-    public function appDown(Application $app) {}
+    public function appDown(Application $app)
+    {
+    }
 }

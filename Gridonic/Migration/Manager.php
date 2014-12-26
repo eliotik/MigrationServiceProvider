@@ -51,7 +51,7 @@ class Manager
         $this->finder       = $finder;
         $this->application  = $application;
 
-        if(isset($application['migration.migrations_table_name'])) {
+        if (isset($application['migration.migrations_table_name'])) {
             $this->migrationsTableName = $application['migration.migrations_table_name'];
         }
     }
@@ -78,7 +78,6 @@ class Manager
 
         foreach ($finder as $migration) {
             if (preg_match('/^(\d+)_(.*Migration).php$/', basename($migration), $matches)) {
-
                 list(, $version, $class) = $matches;
 
                 if ((int) ltrim($version, 0) > $from) {
@@ -161,7 +160,6 @@ class Manager
 
         /** @var $migration \Gridonic\Migration\AbstractMigration */
         foreach ($migrations as $migration) {
-
             $this->actualizeSchema();
 
             // schema up, edit database
@@ -190,7 +188,6 @@ class Manager
             }
 
             $this->migrationExecuted++;
-
         }
 
         $this->migrationInfos = $migrationInfos;
@@ -199,6 +196,4 @@ class Manager
 
         return true;
     }
-
-
 }
