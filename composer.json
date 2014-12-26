@@ -17,7 +17,7 @@
     ],
     "require": {
         "php": ">=5.3.2",
-        "silex/silex": "~1.2",
+        "silex/silex": "~1.1",
         "doctrine/dbal": ">=2.1, <=2.4",
         "symfony/finder": "~2.1",
         "gridonic/console-service-provider": "~1.0"

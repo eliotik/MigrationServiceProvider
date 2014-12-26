@@ -37,13 +37,13 @@ class MigrationServiceProvider implements ServiceProviderInterface
      */
     public function boot(Application $app)
     {
-        if (isset($app['migration.register_before_handler']) && $app['migration.register_before_handler']) {
+        if (isset($app['migration.register_before_handler']) && true === $app['migration.register_before_handler']) {
             $this->registerBeforeHandler($app);
             return;
         }
 
         if (isset($app['twig'])) {
-            $app['twig']->addGlobal('migration_infos', 'You have to start the migration manually in the console.');
+            $app['twig']->addGlobal('migration_infos', 'Before handler not registered. You have to start the migration manually in the console.');
         }
     }
 
@@ -61,18 +61,18 @@ class MigrationServiceProvider implements ServiceProviderInterface
                 $manager->createVersionInfo();
             }
 
-            $migrate = $manager->migrate();
+            $migrationResult = $manager->migrate();
 
             if (isset($app['twig'])) {
                 $migrationInfos = $manager->getMigrationInfos();
                 $migrationVersion = $manager->getCurrentVersion();
 
-                if (true === $migrate) {
-                    $app['twig']->addGlobal('migration_infos', 'Migrated. New version: ' . $migrationVersion . '. Status: ' . $migrationInfos[$migrationVersion]);
+                if (true === $migrationResult) {
+                    $app['twig']->addGlobal('migration_infos', sprintf('Migrated. New version: %s. Status: %s', $migrationVersion, $migrationInfos[$migrationVersion]));
                     return;
                 }
 
-                $app['twig']->addGlobal('migration_infos', 'Nothing to migrate. Actual version: ' . $migrationVersion);
+                $app['twig']->addGlobal('migration_infos', sprintf('Nothing to migrate. Actual version: %s', $migrationVersion));
             }
         });
     }
