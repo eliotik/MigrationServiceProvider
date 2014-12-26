@@ -7,11 +7,11 @@
     "license": "MIT",
     "authors": [
         {
-            "name":     "KnpLabs",
+            "name": "KnpLabs",
             "homepage": "http://knplabs.com"
         },
         {
-            "name":     "gridonic",
+            "name": "gridonic",
             "homepage": "http://gridonic.ch"
         }
     ],
