@@ -2,7 +2,7 @@
     "name": "gridonic/migration-service-provider",
     "type": "library",
     "description": "Doctrine migration service provider for Silex. Based on knplabs/migration-service-provider",
-    "keywords": [ "doctrine", "silex", "migration", "service"],
+    "keywords": ["doctrine", "silex", "migration", "service"],
     "homepage": "http://gridonic.ch",
     "license": "MIT",
     "authors": [
