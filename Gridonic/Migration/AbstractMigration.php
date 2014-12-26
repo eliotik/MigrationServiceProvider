@@ -5,6 +5,11 @@ namespace Gridonic\Migration;
 use Doctrine\DBAL\Schema\Schema;
 use Silex\Application;
 
+/**
+ * Abstract migration class
+ *
+ * @package Gridonic\Migration
+ */
 abstract class AbstractMigration
 {
     public function getVersion()
@@ -15,7 +20,7 @@ abstract class AbstractMigration
             return (int) ltrim($matches[1], 0);
         }
 
-        throw new RuntimeError(sprintf('Could not get version from "%"', basename($rc->getFileName())));
+        throw new \RuntimeException(sprintf('Could not get version from "%"', basename($rc->getFileName())));
     }
 
     public function getMigrationInfo()

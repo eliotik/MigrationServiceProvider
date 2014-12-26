@@ -7,6 +7,11 @@ use Doctrine\DBAL\Connection;
 use Symfony\Component\Finder\Finder;
 use Silex\Application;
 
+/**
+ * Migration manager class
+ *
+ * @package Gridonic\Migration
+ */
 class Manager
 {
     const COLUMN_NAME_VERSION = 'schema_version';
@@ -42,6 +47,13 @@ class Manager
 
     private $migrationsTableName = 'schema_version';
 
+    /**
+     * Public constructor
+     *
+     * @param Connection $connection
+     * @param Application $application
+     * @param Finder $finder
+     */
     public function __construct(Connection $connection, Application $application, Finder $finder)
     {
         $this->schema       = $connection->getSchemaManager()->createSchema();
@@ -56,6 +68,11 @@ class Manager
         }
     }
 
+    /**
+     * TODO: Document
+     * @param Schema $fromSchema
+     * @param Schema $toSchema
+     */
     private function buildSchema(Schema $fromSchema, Schema $toSchema)
     {
         $queries = $fromSchema->getMigrateToSql($toSchema, $this->connection->getDatabasePlatform());
@@ -65,16 +82,20 @@ class Manager
         }
     }
 
+    /**
+     * TODO: Document
+     * @param $from
+     * @return array
+     */
     private function findMigrations($from)
     {
-        $finder     = clone($this->finder);
+        $finder = clone($this->finder);
         $migrations = array();
 
         $finder
             ->files()
             ->name('*Migration.php')
-            ->sortByName()
-        ;
+            ->sortByName();
 
         foreach ($finder as $migration) {
             if (preg_match('/^(\d+)_(.*Migration).php$/', basename($migration), $matches)) {
@@ -97,59 +118,88 @@ class Manager
         return $migrations;
     }
 
+    /**
+     * TODO: Document
+     */
     private function actualizeSchema()
     {
-        $this->schema       = $this->connection->getSchemaManager()->createSchema();
-        $this->toSchemaUp   = clone($this->schema);
+        $this->schema = $this->connection->getSchemaManager()->createSchema();
+        $this->toSchemaUp = clone($this->schema);
         $this->toSchemaDown = clone($this->toSchemaUp);
     }
 
+    /**
+     * TODO: Document
+     * @return array
+     */
     public function getMigrationInfos()
     {
         return $this->migrationInfos;
     }
 
+    /**
+     * TODO: Document
+     * @return int
+     */
     public function getMigrationExecuted()
     {
         return $this->migrationExecuted;
     }
 
+    /**
+     * TODO: Document
+     * @return mixed|null
+     */
     public function getCurrentVersion()
     {
         if (is_null($this->currentVersion)) {
-            $this->currentVersion = $this->connection->fetchColumn('SELECT ' . $this::COLUMN_NAME_VERSION . ' FROM ' . $this->migrationsTableName);
+            $this->currentVersion = $this->connection->fetchColumn('SELECT ' . self::COLUMN_NAME_VERSION . ' FROM ' . $this->migrationsTableName);
         }
 
         return $this->currentVersion;
     }
 
+    /**
+     * TODO: Document
+     * @param $version
+     */
     public function setCurrentVersion($version)
     {
         $this->currentVersion = $version;
-        $this->connection->executeUpdate('UPDATE ' . $this->migrationsTableName . ' SET ' . $this::COLUMN_NAME_VERSION . ' = ?', array($version));
+        $this->connection->executeUpdate('UPDATE ' . $this->migrationsTableName . ' SET ' . self::COLUMN_NAME_VERSION . ' = ?', array($version));
     }
 
+    /**
+     * TODO: Document
+     * @return bool
+     */
     public function hasVersionInfo()
     {
         return $this->schema->hasTable($this->migrationsTableName);
     }
 
+    /**
+     * TODO: Document
+     */
     public function createVersionInfo()
     {
         $schema = clone($this->schema);
 
         $schemaVersion = $schema->createTable($this->migrationsTableName);
-        $schemaVersion->addColumn($this::COLUMN_NAME_VERSION, 'integer', array('unsigned' => true, 'default' => 0));
+        $schemaVersion->addColumn(self::COLUMN_NAME_VERSION, 'integer', array('unsigned' => true, 'default' => 0));
 
         $this->buildSchema($this->schema, $schema);
 
-        $this->connection->insert($this->migrationsTableName, array($this::COLUMN_NAME_VERSION => 0));
+        $this->connection->insert($this->migrationsTableName, array(self::COLUMN_NAME_VERSION => 0));
     }
 
+    /**
+     * TODO: Document
+     * @return bool|null
+     */
     public function migrate()
     {
-        $from    = $this->connection->fetchColumn('SELECT ' . $this::COLUMN_NAME_VERSION . ' FROM ' . $this->migrationsTableName);
-
+        $from = $this->connection->fetchColumn('SELECT ' . self::COLUMN_NAME_VERSION . ' FROM ' . $this->migrationsTableName);
         $migrations = $this->findMigrations($from);
 
         if (count($migrations) == 0) {

@@ -10,8 +10,16 @@ use Gridonic\Console\ConsoleEvents;
 use Gridonic\Console\ConsoleEvent;
 use Gridonic\Command\MigrationCommand;
 
+/**
+ * Migration service provider
+ *
+ * @package Gridonic\Provider
+ */
 class MigrationServiceProvider implements ServiceProviderInterface
 {
+    /**
+     * @inheritdoc
+     */
     public function register(Application $app)
     {
         $app['migration'] = $app->share(function () use ($app) {
@@ -24,18 +32,27 @@ class MigrationServiceProvider implements ServiceProviderInterface
         });
     }
 
+    /**
+     * @inheritdoc
+     */
     public function boot(Application $app)
     {
         if (isset($app['migration.register_before_handler']) && $app['migration.register_before_handler']) {
             $this->registerBeforeHandler($app);
-        } else {
-            if (isset($app['twig'])) {
-                $app['twig']->addGlobal('migration_infos', 'You have to start the migration manually in the console.');
-            }
+            return;
+        }
+
+        if (isset($app['twig'])) {
+            $app['twig']->addGlobal('migration_infos', 'You have to start the migration manually in the console.');
         }
     }
 
-    private function registerBeforeHandler($app)
+    /**
+     * Register the before request event handler and add migration infos.
+     *
+     * @param Application $app The Silex application instance
+     */
+    private function registerBeforeHandler(Application $app)
     {
         $app->before(function () use ($app) {
             $manager = $app['migration'];
@@ -52,9 +69,10 @@ class MigrationServiceProvider implements ServiceProviderInterface
 
                 if (true === $migrate) {
                     $app['twig']->addGlobal('migration_infos', 'Migrated. New version: ' . $migrationVersion . '. Status: ' . $migrationInfos[$migrationVersion]);
-                } else {
-                    $app['twig']->addGlobal('migration_infos', 'Nothing to migrate. Actual version: ' . $migrationVersion);
+                    return;
                 }
+
+                $app['twig']->addGlobal('migration_infos', 'Nothing to migrate. Actual version: ' . $migrationVersion);
             }
         });
     }
