@@ -1,9 +1,10 @@
-# PhpStorm-Files
-atlassian-ide-plugin.xml
+# PhpStorm-Files / C9
 .idea
+.c9
 
 # Tests
 phpunit.xml
 vendor
 composer.lock
-tests/database/test.db
+test.db
+index.php
