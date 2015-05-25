@@ -22,7 +22,10 @@ class MigrationServiceProvider implements ServiceProviderInterface
      */
     public function register(Application $app)
     {
+        
+        
         $app['migration'] = $app->share(function () use ($app) {
+            $app['db'] = !empty($app['db']) ? $app['db'] : $app['migration.db'];
             return new MigrationManager($app['db'], $app, Finder::create()->in($app['migration.path']));
         });
 

@@ -45,14 +45,17 @@ $app->register(new MigrationServiceProvider(), array(
     'migration.path' => __DIR__.'/../src/Resources/migrations',
     'migration.register_before_handler' => true,
     'migration.migrations_table_name'   => 'migration_version',
+    'migration.db' => $app['db']
 ));
 ```
 
 | Key | Type | Optional | Description |
 | --- | --- | --- | --- |
+
 | `migrations.path` | String/Array | - | Path or array of paths to migrations |
 | `migrations.register_before_handler` | Boolean | x | Should the service run the migrations on each boot? |
 | `migrations.migrations_table_name` | String | x | The name of the table in the database, where the migration_version is safed. Default `schema_version` |
+| `migrations.db` | Object | x | Optional DBAL Connection instance |
 
 ## Running migrations
 
