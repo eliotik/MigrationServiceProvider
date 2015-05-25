@@ -8,3 +8,6 @@ vendor
 composer.lock
 test.db
 index.php
+tests
+migrations
+database
