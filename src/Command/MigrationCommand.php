@@ -1,12 +1,12 @@
 <?php
 
-namespace Gridonic\Command;
+namespace AchrafSoltani\Command;
 
-use Gridonic\Command\Command as GridonicCommand;
+use AchrafSoltani\Command\Command as AchrafSoltaniCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class MigrationCommand extends GridonicCommand
+class MigrationCommand extends AchrafSoltaniCommand
 {
     public function configure()
     {
@@ -28,7 +28,7 @@ EOF
     {
         $app        = $this->getSilexApplication();
 
-        /** @var \Gridonic\Migration\Manager $manager */
+        /** @var \AchrafSoltani\Migration\Manager $manager */
         $manager    = $app['migration'];
 
         if (!$manager->hasVersionInfo()) {

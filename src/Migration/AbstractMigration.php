@@ -1,6 +1,6 @@
 <?php
 
-namespace Gridonic\Migration;
+namespace AchrafSoltani\Migration;
 
 use Doctrine\DBAL\Schema\Schema;
 use Silex\Application;
@@ -8,7 +8,7 @@ use Silex\Application;
 /**
  * Abstract migration class
  *
- * @package Gridonic\Migration
+ * @package AchrafSoltani\Migration
  */
 abstract class AbstractMigration
 {

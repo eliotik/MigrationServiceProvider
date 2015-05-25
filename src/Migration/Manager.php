@@ -1,6 +1,6 @@
 <?php
 
-namespace Gridonic\Migration;
+namespace AchrafSoltani\Migration;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Connection;
@@ -10,7 +10,7 @@ use Silex\Application;
 /**
  * Migration manager class
  *
- * @package Gridonic\Migration
+ * @package AchrafSoltani\Migration
  */
 class Manager
 {
@@ -208,7 +208,7 @@ class Manager
 
         $migrationInfos = array();
 
-        /** @var $migration \Gridonic\Migration\AbstractMigration */
+        /** @var $migration \AchrafSoltani\Migration\AbstractMigration */
         foreach ($migrations as $migration) {
             $this->actualizeSchema();
 

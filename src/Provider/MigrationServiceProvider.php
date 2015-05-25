@@ -1,19 +1,19 @@
 <?php
 
-namespace Gridonic\Provider;
+namespace AchrafSoltani\Provider;
 
 use Symfony\Component\Finder\Finder;
 use Silex\ServiceProviderInterface;
 use Silex\Application;
-use Gridonic\Migration\Manager as MigrationManager;
-use Gridonic\Console\ConsoleEvents;
-use Gridonic\Console\ConsoleEvent;
-use Gridonic\Command\MigrationCommand;
+use AchrafSoltani\Migration\Manager as MigrationManager;
+use AchrafSoltani\Console\ConsoleEvents;
+use AchrafSoltani\Console\ConsoleEvent;
+use AchrafSoltani\Command\MigrationCommand;
 
 /**
  * Migration service provider
  *
- * @package Gridonic\Provider
+ * @package AchrafSoltani\Provider
  */
 class MigrationServiceProvider implements ServiceProviderInterface
 {
