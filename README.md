@@ -1,15 +1,47 @@
 # MigrationServiceProvider
 
-[![Build Status](https://travis-ci.org/gridonic/MigrationServiceProvider.svg?branch=master)](https://travis-ci.org/gridonic/MigrationServiceProvider)
+[![Latest Stable Version](https://poser.pugx.org/achrafsoltani/migration-service-provider/v/stable)](https://packagist.org/packages/achrafsoltani/migration-service-provider)
+[![Total Downloads](https://poser.pugx.org/achrafsoltani/migration-service-provider/downloads)](https://packagist.org/packages/achrafsoltani/migration-service-provider)
+[![License](https://poser.pugx.org/achrafsoltani/migration-service-provider/license)](https://packagist.org/packages/achrafsoltani/migration-service-provider)
 
 This is a simple homebrew schema migration system for silex and doctrine.
 
 ## Install
 
-As usual, just include `gridonic/migration-service-provider` in your `composer.json` and register the service.
+Installation
+------------ 
+```sh
+$ composer require achrafsoltani/migration-service-provider
+```
+Setup
+------------
+``` {.php}
+require_once __DIR__.'/vendor/autoload.php';
+
+use Silex\Application;
+use Silex\Provider\DoctrineServiceProvider;
+use Gridonic\Provider\ConsoleServiceProvider;
+use AchrafSoltani\Provider\MigrationServiceProvider;
+
+$app = new Application();
+
+$app->register(new Silex\Provider\DoctrineServiceProvider(), array(
+    'db.options' => array(
+        // db options
+    ),
+));
+
+$app->register(new ConsoleServiceProvider(), array(
+    // console options
+));
+
+// Usage
+
+$app->run();
+```
 
 ```php
-$app->register(new \Gridonic\Provider\MigrationServiceProvider(), array(
+$app->register(new MigrationServiceProvider(), array(
     'migration.path' => __DIR__.'/../src/Resources/migrations',
     'migration.register_before_handler' => true,
     'migration.migrations_table_name'   => 'migration_version',
@@ -18,16 +50,9 @@ $app->register(new \Gridonic\Provider\MigrationServiceProvider(), array(
 
 | Key | Type | Optional | Description |
 | --- | --- | --- | --- |
-| `migrations.path` | String, folder path | - | Where are your migrations? |
+| `migrations.path` | String/Array | - | Path or array of paths to migrations |
 | `migrations.register_before_handler` | Boolean | x | Should the service run the migrations on each boot? |
 | `migrations.migrations_table_name` | String | x | The name of the table in the database, where the migration_version is safed. Default `schema_version` |
-
-## Enough small talk, I want to write migrations!
-
-Perhaps, this documentation is not complete. So here are some links with more informations:
-
-* [The official documentation for Doctrine's DBAL Schema Manager](http://readthedocs.org/docs/doctrine-dbal/en/latest/reference/schema-manager.html)
-* [Original `KnpLabs\migration-service-provider`](https://github.com/KnpLabs/MigrationServiceProvider)
 
 ## Running migrations
 
@@ -78,6 +103,12 @@ You can then use it with something like that:
 ```html
       Migration informations: {{ migration_infos }}
 ```
+
+Full API documentation
+------------
+* [The official documentation for Doctrine's DBAL Schema Manager](http://readthedocs.org/docs/doctrine-dbal/en/latest/reference/schema-manager.html)
+* [Original `KnpLabs\migration-service-provider`](https://github.com/KnpLabs/MigrationServiceProvider)
+* [Original `Gridonic\migration-service-provider`](https://github.com/gridonic/MigrationServiceProvider)
 
 ## Licence
 The MigrationServiceProvider is licensed under the MIT license.
