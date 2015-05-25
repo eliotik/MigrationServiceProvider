@@ -6,8 +6,8 @@ use Symfony\Component\Finder\Finder;
 use Silex\ServiceProviderInterface;
 use Silex\Application;
 use AchrafSoltani\Migration\Manager as MigrationManager;
-use AchrafSoltani\Console\ConsoleEvents;
-use AchrafSoltani\Console\ConsoleEvent;
+use Gridonic\Console\ConsoleEvents;
+use Gridonic\Console\ConsoleEvent;
 use AchrafSoltani\Command\MigrationCommand;
 
 /**
