@@ -1,0 +1,198 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Migrationserviceprovider by AchrafSoltani</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Migrationserviceprovider</h1>
+        <p>Simple Doctrine2 migration manager for Silex -- based on KnpLabs/MigrationServiceProvider, Upgrading to the latest Doctrine DBAL version-- maintained by AchrafSoltani</p>
+
+        <p class="view"><a href="https://github.com/AchrafSoltani/MigrationServiceProvider">View the Project on GitHub <small>AchrafSoltani/MigrationServiceProvider</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/AchrafSoltani/MigrationServiceProvider/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/AchrafSoltani/MigrationServiceProvider/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/AchrafSoltani/MigrationServiceProvider">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="migrationserviceprovider" class="anchor" href="#migrationserviceprovider" aria-hidden="true"><span class="octicon octicon-link"></span></a>MigrationServiceProvider</h1>
+
+<p><a href="https://packagist.org/packages/achrafsoltani/migration-service-provider"><img src="https://poser.pugx.org/achrafsoltani/migration-service-provider/v/stable" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/achrafsoltani/migration-service-provider"><img src="https://poser.pugx.org/achrafsoltani/migration-service-provider/downloads" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/achrafsoltani/migration-service-provider"><img src="https://poser.pugx.org/achrafsoltani/migration-service-provider/license" alt="License"></a></p>
+
+<p>This is a simple homebrew schema migration system for silex and doctrine.</p>
+
+<h2>
+<a id="install" class="anchor" href="#install" aria-hidden="true"><span class="octicon octicon-link"></span></a>Install</h2>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<div class="highlight highlight-sh"><pre>$ composer require achrafsoltani/migration-service-provider</pre></div>
+
+<h2>
+<a id="setup" class="anchor" href="#setup" aria-hidden="true"><span class="octicon octicon-link"></span></a>Setup</h2>
+
+<div class="highlight highlight-php"><pre><span class="pl-s1"><span class="pl-k">require_once</span> <span class="pl-c1">__DIR__</span><span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">'</span>/vendor/autoload.php<span class="pl-pds">'</span></span>;</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Silex\Application</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Silex\Provider\DoctrineServiceProvider</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Gridonic\Provider\ConsoleServiceProvider</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">AchrafSoltani\Provider\MigrationServiceProvider</span>;</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$app</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-c1">Application</span>();</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$app</span><span class="pl-k">-&gt;</span>register(<span class="pl-k">new</span> <span class="pl-c1">Silex\Provider\</span><span class="pl-c1">DoctrineServiceProvider</span>(), <span class="pl-c1">array</span>(</span>
+<span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>db.options<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-c1">array</span>(</span>
+<span class="pl-s1">        <span class="pl-c">// db options</span></span>
+<span class="pl-s1">    ),</span>
+<span class="pl-s1">));</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$app</span><span class="pl-k">-&gt;</span>register(<span class="pl-k">new</span> <span class="pl-c1">ConsoleServiceProvider</span>(), <span class="pl-c1">array</span>(</span>
+<span class="pl-s1">    <span class="pl-c">// console options</span></span>
+<span class="pl-s1">));</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c">// Usage</span></span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-smi">$app</span><span class="pl-k">-&gt;</span>run();</span></pre></div>
+
+<div class="highlight highlight-php"><pre><span class="pl-s1"><span class="pl-smi">$app</span><span class="pl-k">-&gt;</span>register(<span class="pl-k">new</span> <span class="pl-c1">MigrationServiceProvider</span>(), <span class="pl-c1">array</span>(</span>
+<span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>migration.path<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-c1">__DIR__</span><span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">'</span>/../src/Resources/migrations<span class="pl-pds">'</span></span>,</span>
+<span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>migration.register_before_handler<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-c1">true</span>,</span>
+<span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>migration.migrations_table_name<span class="pl-pds">'</span></span>   <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>migration_version<span class="pl-pds">'</span></span>,</span>
+<span class="pl-s1">));</span></pre></div>
+
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Optional</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>migrations.path</code></td>
+<td>String/Array</td>
+<td>-</td>
+<td>Path or array of paths to migrations</td>
+</tr>
+<tr>
+<td><code>migrations.register_before_handler</code></td>
+<td>Boolean</td>
+<td>x</td>
+<td>Should the service run the migrations on each boot?</td>
+</tr>
+<tr>
+<td><code>migrations.migrations_table_name</code></td>
+<td>String</td>
+<td>x</td>
+<td>The name of the table in the database, where the migration_version is safed. Default <code>schema_version</code>
+</td>
+</tr>
+</tbody>
+</table>
+
+<h2>
+<a id="running-migrations" class="anchor" href="#running-migrations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running migrations</h2>
+
+<p>There are two ways of running migrations</p>
+
+<h3>
+<a id="using-the-before-handler" class="anchor" href="#using-the-before-handler" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the <code>before</code> handler</h3>
+
+<p>If you pass a <code>migration.register_before_handler</code> (set to <code>true</code>) when registering the service, then a <code>before</code> handler will be registered for migration to be run. It means that the migration manager will be run for each hit to your application.</p>
+
+<p>You might want to enable this behavior for development mode, but please don't do that in production!</p>
+
+<h3>
+<a id="using-the-migrationmigrate-command" class="anchor" href="#using-the-migrationmigrate-command" aria-hidden="true"><span class="octicon octicon-link"></span></a>Using the <code>migration:migrate</code> command</h3>
+
+<p>If you installed the console service provider right, you can use the <code>migration:migrate</code> command, so your app does not have to run the migrations each time when your web-Application is called.</p>
+
+<h2>
+<a id="writing-migrations" class="anchor" href="#writing-migrations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Writing migrations</h2>
+
+<p>A migration consist of a single file, holding a migration class. By design, the migration file must be named something like <code>&lt;version&gt;_&lt;migration_name&gt;Migration.php</code> and located in <code>src/Resources/migrations</code>, and the class <code>&lt;migration_name&gt;Migration</code>. For example, if your migration adds a <code>bar</code> field to the <code>foo</code> table, and is the 5th migration of your schema, you should name your file <code>05_FooBarMigration.php</code>, and the class would be named <code>FooBarMigration</code>.</p>
+
+<p>In addition to these naming conventions, your migration class must extends <code>Gridonic\Migration\AbstractMigration</code>, which provides a few helping method such as <code>getVersion</code> and default implementations for migration methods.</p>
+
+<p>The migration methods consist of 4 methods, which are called in this order:</p>
+
+<ul>
+<li><code>schemaUp</code></li>
+<li><code>appUp</code></li>
+<li><code>schemaDown</code></li>
+<li><code>appDown</code></li>
+</ul>
+
+<h3>
+<a id="schemaup" class="anchor" href="#schemaup" aria-hidden="true"><span class="octicon octicon-link"></span></a>schemaUp</h3>
+
+<p>You get a <code>Doctrine\DBAL\Schema\Schema</code> instance where you can add, remove or modify the schema of your database.</p>
+
+<h3>
+<a id="appup" class="anchor" href="#appup" aria-hidden="true"><span class="octicon octicon-link"></span></a>appUp</h3>
+
+<p>After the <code>schemaUp</code>, you can edit the application - you get a <code>Silex\Application</code> instance for that. Here you can modify existing data after you have added a column.</p>
+
+<h3>
+<a id="schemadown" class="anchor" href="#schemadown" aria-hidden="true"><span class="octicon octicon-link"></span></a>schemaDown</h3>
+
+<p>After the <code>appUp</code>, you can modify the schema of your database again. You get a <code>Doctrine\DBAL\Schema\Schema</code> instance which you can use.</p>
+
+<h3>
+<a id="appdown" class="anchor" href="#appdown" aria-hidden="true"><span class="octicon octicon-link"></span></a>appDown</h3>
+
+<p>Last but not least, you can work again with a <code>Silex\Application</code> instance. Modify the existing data or something like this.</p>
+
+<h2>
+<a id="migration-infos" class="anchor" href="#migration-infos" aria-hidden="true"><span class="octicon octicon-link"></span></a>Migration infos</h2>
+
+<p>There's one last method you should know about: <code>getMigrationInfos</code>. This method should return a self-explanatory description of the migration (it is optional though, and you can skip its implementation).
+If you use <a href="http://twig.sensiolabs.org/">Twig</a>, we have built in a <code>migration_infos</code> for twig - perhaps a function just for the developer-mode.</p>
+
+<p>You can then use it with something like that:</p>
+
+<div class="highlight highlight-html"><pre>      Migration informations: {{ migration_infos }}</pre></div>
+
+<h2>
+<a id="full-api-documentation" class="anchor" href="#full-api-documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Full API documentation</h2>
+
+<ul>
+<li><a href="http://readthedocs.org/docs/doctrine-dbal/en/latest/reference/schema-manager.html">The official documentation for Doctrine's DBAL Schema Manager</a></li>
+<li><a href="https://github.com/KnpLabs/MigrationServiceProvider">Original <code>KnpLabs\migration-service-provider</code></a></li>
+<li><a href="https://github.com/gridonic/MigrationServiceProvider">Original <code>Gridonic\migration-service-provider</code></a></li>
+</ul>
+
+<h2>
+<a id="licence" class="anchor" href="#licence" aria-hidden="true"><span class="octicon octicon-link"></span></a>Licence</h2>
+
+<p>The MigrationServiceProvider is licensed under the MIT license.
+The original library from is taken from the <a href="https://github.com/KnpLabs/MigrationServiceProvider">KnpLabs</a>.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/AchrafSoltani">AchrafSoltani</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
