@@ -102,9 +102,12 @@ class Manager
                 list(, $version, $class) = $matches;
 
                 if ((int) ltrim($version, 0) > $from) {
-                    require_once $migration;
+                    $ns = require_once $migration; 
+                    
+                    if(empty($ns))
+                        $ns = '\\Migration';
 
-                    $fqcn = '\\Migration\\'.$class;
+                    $fqcn = $ns.'\\'.$class;
 
                     if (!class_exists($fqcn)) {
                         throw new \RuntimeException(sprintf('Could not find class "%s" in "%s"', $fqcn, $migration));
