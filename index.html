@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Migrationserviceprovider by Achraf Soltani</title>
+    <title>Migrationserviceprovider by AchrafSoltani</title>
 
     <link rel="stylesheet" href="stylesheets/styles.css">
     <link rel="stylesheet" href="stylesheets/github-light.css">
@@ -16,7 +16,7 @@
     <div class="wrapper">
       <header>
         <h1>Migrationserviceprovider</h1>
-        <p>Simple Doctrine2 migration manager for Silex -- based on KnpLabs/MigrationServiceProvider, Upgrading to the latest Doctrine DBAL version-- maintained by Achraf Soltani</p>
+        <p>Simple Doctrine2 migration manager for Silex -- based on KnpLabs/MigrationServiceProvider, Upgrading to the latest Doctrine DBAL version-- maintained by AchrafSoltani</p>
 
         <p class="view"><a href="https://github.com/AchrafSoltani/MigrationServiceProvider">View the Project on GitHub <small>AchrafSoltani/MigrationServiceProvider</small></a></p>
 
@@ -75,6 +75,7 @@
 <span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>migration.path<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-c1">__DIR__</span><span class="pl-k">.</span><span class="pl-s"><span class="pl-pds">'</span>/../src/Resources/migrations<span class="pl-pds">'</span></span>,</span>
 <span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>migration.register_before_handler<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-c1">true</span>,</span>
 <span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>migration.migrations_table_name<span class="pl-pds">'</span></span>   <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>migration_version<span class="pl-pds">'</span></span>,</span>
+<span class="pl-s1">    <span class="pl-s"><span class="pl-pds">'</span>migration.db<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-smi">$app</span>[<span class="pl-s"><span class="pl-pds">'</span>db<span class="pl-pds">'</span></span>]</span>
 <span class="pl-s1">));</span></pre></div>
 
 <table>
@@ -106,8 +107,78 @@
 <td>The name of the table in the database, where the migration_version is safed. Default <code>schema_version</code>
 </td>
 </tr>
+<tr>
+<td><code>migrations.db</code></td>
+<td>Object</td>
+<td>x</td>
+<td>Optional DBAL Connection instance, if not provided, it will rely on a previously set DoctrineServiceProvider instance</td>
+</tr>
 </tbody>
 </table>
+
+<h2>
+<a id="migration-example" class="anchor" href="#migration-example" aria-hidden="true"><span class="octicon octicon-link"></span></a>Migration Example</h2>
+
+<div class="highlight highlight-php"><pre><span class="pl-pse">&lt;?php</span><span class="pl-s1"></span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c">// I'm using a custom namespace with a custom loader</span></span>
+<span class="pl-s1"><span class="pl-k">namespace</span> <span class="pl-en">Core\User\Migration</span>;</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Doctrine\DBAL\Schema\Schema</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">AchrafSoltani\Migration\AbstractMigration</span>;</span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Silex\Application</span>;</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c">// Custom class, demonstration only</span></span>
+<span class="pl-s1"><span class="pl-k">use</span> <span class="pl-c1">Core\User\Model\User</span>;</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c"> * Class UsersMigration</span></span>
+<span class="pl-s1"><span class="pl-c"> *</span></span>
+<span class="pl-s1"><span class="pl-c"> * <span class="pl-k">@package</span> Core\User\Migration</span></span>
+<span class="pl-s1"><span class="pl-c"> */</span></span>
+<span class="pl-s1"><span class="pl-k">class</span> <span class="pl-en">UsersMigration</span> <span class="pl-k">extends</span> <span class="pl-e">AbstractMigration</span></span>
+<span class="pl-s1">{</span>
+<span class="pl-s1">    <span class="pl-c">/**</span></span>
+<span class="pl-s1"><span class="pl-c">     * <span class="pl-k">@param</span> Schema $schema</span></span>
+<span class="pl-s1"><span class="pl-c">     */</span></span>
+<span class="pl-s1">    <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">schemaUp</span>(<span class="pl-c1">Schema</span> <span class="pl-smi">$schema</span>)</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-c">// before app is started, do the following.</span></span>
+<span class="pl-s1">        <span class="pl-smi">$table</span> <span class="pl-k">=</span> <span class="pl-smi">$schema</span><span class="pl-k">-&gt;</span>createTable(<span class="pl-s"><span class="pl-pds">'</span>users<span class="pl-pds">'</span></span>);</span>
+<span class="pl-s1">        <span class="pl-smi">$table</span><span class="pl-k">-&gt;</span>addColumn(<span class="pl-s"><span class="pl-pds">'</span>id<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>integer<span class="pl-pds">'</span></span>, <span class="pl-c1">array</span>(</span>
+<span class="pl-s1">            <span class="pl-s"><span class="pl-pds">'</span>unsigned<span class="pl-pds">'</span></span>      <span class="pl-k">=&gt;</span> <span class="pl-c1">true</span>,</span>
+<span class="pl-s1">            <span class="pl-s"><span class="pl-pds">'</span>autoincrement<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-c1">true</span></span>
+<span class="pl-s1">        ));</span>
+<span class="pl-s1">        <span class="pl-smi">$table</span><span class="pl-k">-&gt;</span>addColumn(<span class="pl-s"><span class="pl-pds">'</span>username<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>string<span class="pl-pds">'</span></span>, <span class="pl-c1">array</span>(<span class="pl-s"><span class="pl-pds">'</span>notnull<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-c1">true</span>, <span class="pl-s"><span class="pl-pds">'</span>default<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>length<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-c1">100</span>));</span>
+<span class="pl-s1">        <span class="pl-smi">$table</span><span class="pl-k">-&gt;</span>addColumn(<span class="pl-s"><span class="pl-pds">'</span>password<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>string<span class="pl-pds">'</span></span>, <span class="pl-c1">array</span>(<span class="pl-s"><span class="pl-pds">'</span>notnull<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-c1">true</span>, <span class="pl-s"><span class="pl-pds">'</span>default<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>length<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-c1">255</span>));</span>
+<span class="pl-s1">        <span class="pl-smi">$table</span><span class="pl-k">-&gt;</span>addColumn(<span class="pl-s"><span class="pl-pds">'</span>roles<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>string<span class="pl-pds">'</span></span>, <span class="pl-c1">array</span>(<span class="pl-s"><span class="pl-pds">'</span>notnull<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-c1">true</span>, <span class="pl-s"><span class="pl-pds">'</span>default<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span>length<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-c1">255</span>));</span>
+<span class="pl-s1">        <span class="pl-smi">$table</span><span class="pl-k">-&gt;</span>setPrimaryKey(<span class="pl-c1">array</span>(<span class="pl-s"><span class="pl-pds">"</span>id<span class="pl-pds">"</span></span>));</span>
+<span class="pl-s1">        <span class="pl-smi">$table</span><span class="pl-k">-&gt;</span>addUniqueIndex(<span class="pl-c1">array</span>(<span class="pl-s"><span class="pl-pds">"</span>username<span class="pl-pds">"</span></span>));</span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">appUp</span>(<span class="pl-c1">Application</span> <span class="pl-smi">$app</span>)</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-c">// create default user</span></span>
+<span class="pl-s1">        <span class="pl-c">// My model manager class takes a Doctrine\DBAL\Connection instance as parameter</span></span>
+<span class="pl-s1">        <span class="pl-c">// This part is fully custom, for demontration purpose only</span></span>
+<span class="pl-s1">        <span class="pl-smi">$user_model</span> <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-c1">User</span>(<span class="pl-smi">$app</span>[<span class="pl-s"><span class="pl-pds">'</span>db<span class="pl-pds">'</span></span>]);</span>
+<span class="pl-s1">        <span class="pl-smi">$user_data</span> <span class="pl-k">=</span> <span class="pl-c1">array</span>(</span>
+<span class="pl-s1">            <span class="pl-s"><span class="pl-pds">'</span>username<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>achraf<span class="pl-pds">'</span></span>,</span>
+<span class="pl-s1">            <span class="pl-s"><span class="pl-pds">'</span>password<span class="pl-pds">'</span></span> <span class="pl-k">=&gt;</span> <span class="pl-smi">$app</span>[<span class="pl-s"><span class="pl-pds">'</span>security.encoder.digest<span class="pl-pds">'</span></span>]<span class="pl-k">-&gt;</span>encodePassword(<span class="pl-s"><span class="pl-pds">'</span>password<span class="pl-pds">'</span></span>, <span class="pl-s"><span class="pl-pds">'</span><span class="pl-pds">'</span></span>),</span>
+<span class="pl-s1">            <span class="pl-s"><span class="pl-pds">'</span>roles<span class="pl-pds">'</span></span>    <span class="pl-k">=&gt;</span> <span class="pl-s"><span class="pl-pds">'</span>ROLE_USER<span class="pl-pds">'</span></span></span>
+<span class="pl-s1">        );</span>
+<span class="pl-s1">        <span class="pl-smi">$user_model</span><span class="pl-k">-&gt;</span>create(<span class="pl-smi">$user_data</span>);</span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1"></span>
+<span class="pl-s1">    <span class="pl-k">public</span> <span class="pl-k">function</span> <span class="pl-en">getMigrationInfo</span>()</span>
+<span class="pl-s1">    {</span>
+<span class="pl-s1">        <span class="pl-k">return</span> <span class="pl-s"><span class="pl-pds">'</span>Added users table<span class="pl-pds">'</span></span>;</span>
+<span class="pl-s1">    }</span>
+<span class="pl-s1">}</span>
+<span class="pl-s1"></span>
+<span class="pl-s1"><span class="pl-c">// Very important to add if you wanna organise your migration files within namespaced folders</span></span>
+<span class="pl-s1"><span class="pl-c">// if not specified, the migration will be expected to be in the \Migration namespace</span></span>
+<span class="pl-s1"><span class="pl-k">return</span> <span class="pl-c1">__NAMESPACE__</span>;</span></pre></div>
 
 <h2>
 <a id="running-migrations" class="anchor" href="#running-migrations" aria-hidden="true"><span class="octicon octicon-link"></span></a>Running migrations</h2>
