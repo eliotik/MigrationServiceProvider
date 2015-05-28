@@ -56,6 +56,71 @@ $app->register(new MigrationServiceProvider(), array(
 | `migrations.migrations_table_name` | String | x | The name of the table in the database, where the migration_version is safed. Default `schema_version` |
 | `migrations.db` | Object | x | Optional DBAL Connection instance, if not provided, it will rely on a previously set DoctrineServiceProvider instance |
 
+## Migration Example
+
+```php
+<?php
+
+// I'm using a custom namespace with a custom loader
+namespace Core\User\Migration;
+
+use Doctrine\DBAL\Schema\Schema;
+use AchrafSoltani\Migration\AbstractMigration;
+use Silex\Application;
+
+// Custom class, demonstration only
+use Core\User\Model\User;
+
+/**
+ * Class UsersMigration
+ *
+ * @package Core\User\Migration
+ */
+class UsersMigration extends AbstractMigration
+{
+    /**
+     * @param Schema $schema
+     */
+    public function schemaUp(Schema $schema)
+    {
+        // before app is started, do the following.
+        $table = $schema->createTable('users');
+        $table->addColumn('id', 'integer', array(
+            'unsigned'      => true,
+            'autoincrement' => true
+        ));
+        $table->addColumn('username', 'string', array('notnull' => true, 'default' => '', 'length' => 100));
+        $table->addColumn('password', 'string', array('notnull' => true, 'default' => '', 'length' => 255));
+        $table->addColumn('roles', 'string', array('notnull' => true, 'default' => '', 'length' => 255));
+        $table->setPrimaryKey(array("id"));
+        $table->addUniqueIndex(array("username"));
+    }
+    
+    public function appUp(Application $app)
+    {
+        // create default user
+        // My model manager class takes a Doctrine\DBAL\Connection instance as parameter
+        // This part is fully custom, for demontration purpose only
+        $user_model = new User($app['db']);
+        $user_data = array(
+            'username' => 'achraf',
+            'password' => $app['security.encoder.digest']->encodePassword('password', ''),
+            'roles'    => 'ROLE_USER'
+        );
+        $user_model->create($user_data);
+    }
+    
+    public function getMigrationInfo()
+    {
+        return 'Added users table';
+    }
+}
+
+// Very important to add if you wanna organise your migration files within namespaced folders
+// if not specified, the migration will be expected to be in the \Migration namespace
+return __NAMESPACE__;
+```
+
 ## Running migrations
 
 There are two ways of running migrations
