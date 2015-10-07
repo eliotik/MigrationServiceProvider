@@ -1,9 +1,9 @@
 {
-    "name": "achrafsoltani/migration-service-provider",
+    "name": "eliotik/migration-service-provider",
     "type": "library",
     "description": "Doctrine migration service provider for Silex. Based on knplabs/migration-service-provider",
     "keywords": ["doctrine", "silex", "migration", "service"],
-    "homepage": "http://www.achrafsoltani.com",
+    "homepage": "https://github.com/eliotik/MigrationServiceProvider",
     "license": "MIT",
     "authors": [
         {
