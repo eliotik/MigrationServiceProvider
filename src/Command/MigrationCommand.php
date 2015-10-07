@@ -2,11 +2,11 @@
 
 namespace AchrafSoltani\Command;
 
-use AchrafSoltani\Command\Command as AchrafSoltaniCommand;
+use Gridonic\Command\Command as GridonicCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class MigrationCommand extends AchrafSoltaniCommand
+class MigrationCommand extends GridonicCommand
 {
     public function configure()
     {
